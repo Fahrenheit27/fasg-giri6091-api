@@ -8,7 +8,7 @@ export class TaskRepositoryImpl implements ITaskRepository {
 
     async create(task: Task): Promise<Task> {
         this.tasks.push(task)
-        return task
+        return task;
     }
 
     async findAll(): Promise<Task[]> {
