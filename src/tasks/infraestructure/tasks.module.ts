@@ -1,20 +1,18 @@
-import { Module } from "@nestjs/common";
-import { TaskController } from "./controllers/tasks.controller";
-import { CreateTaskUseCase } from "../application/create-task.use.case";
-import { TaskRepositoryImpl } from "./persistence/task.repository.impl";
-import { ITaskRepositoryToken } from "../domain/task.repository.interface";
-import { AppModule } from "../../app.module";
+import { Module } from '@nestjs/common'
+import { TasksController } from './controllers/tasks.controllers'
+import { TaskRepositoryImpl } from './persistence/task.repository.impl'
+import { CreateTaskUseCase } from '../application/create.task.use.case'
+import { ITaskRepositoryToken } from '../domain/task.repository.interface'
 
 @Module({
-    controllers: [TaskController],
+    controllers: [TasksController],
     providers: [
+        CreateTaskUseCase,
         {
             provide: ITaskRepositoryToken,
-            useClass: TaskRepositoryImpl,
-        },
-        CreateTaskUseCase,
+            useClass: TaskRepositoryImpl
+        }
     ],
-    exports: [TaskController, CreateTaskUseCase],
+    exports: [CreateTaskUseCase]
 })
-
-export class TasksModule {}
+export class TaskModule {}
