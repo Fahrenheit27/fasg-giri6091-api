@@ -7,13 +7,11 @@ export class Task {
         public title: string,
         public description: string,
         public status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED',
-        public createdAt: Date,
-    ) {}
+        public createdAt: Date      
+    ) { }
 
     // Lógica en la capa de dominio
     complete() {
         this.status = 'COMPLETED';
     }
 }
-
-
