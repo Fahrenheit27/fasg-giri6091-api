@@ -8,15 +8,16 @@ export class TaskRepositoryPrismaImpl implements ITaskRepository {
 
     constructor(private readonly prisma: PrismaService) {}
 
+    // Mapper: objeto plano de Prisma → clase Task con todos sus métodos
     private toDomain(data: any): Task {
-    return new Task(
-        data.id,
-        data.title,
-        data.description ?? '',
-        data.status as 'PENDING' | 'IN_PROGRESS' | 'COMPLETED',
-        data.createdAt
-    );
-}
+        return new Task(
+            data.id,
+            data.title,
+            data.description ?? '',
+            data.status as 'PENDING' | 'IN_PROGRESS' | 'COMPLETED',
+            data.createdAt
+        );
+    }
 
     async create(task: Task): Promise<Task> {
         const created = await this.prisma.task.create({
@@ -26,19 +27,19 @@ export class TaskRepositoryPrismaImpl implements ITaskRepository {
                 status: task.status,
             }
         });
-        return this.toDomain(created);
+        return this.toDomain(created);  
     }
 
     async findAll(): Promise<Task[]> {
         const tasks = await this.prisma.task.findMany({
             orderBy: { createdAt: 'desc' }
         });
-        return tasks.map(t => this.toDomain(t));
+        return tasks.map(t => this.toDomain(t)); 
     }
 
-    async findById(id: number): Promise<Task | null> {  // ← number
+    async findById(id: number): Promise<Task | null> {
         const task = await this.prisma.task.findUnique({
-            where: { id }                               // ← number, ok con Int
+            where: { id }
         });
         return task ? this.toDomain(task) : null;
     }
@@ -52,10 +53,10 @@ export class TaskRepositoryPrismaImpl implements ITaskRepository {
                 status: task.status,
             }
         });
-        return this.toDomain(updated);
+        return this.toDomain(updated);  // ← mapper, no "as Task"
     }
 
-    async delete(id: number): Promise<boolean> {       // ← number
+    async delete(id: number): Promise<boolean> {
         try {
             await this.prisma.task.delete({ where: { id } });
             return true;
@@ -64,9 +65,3 @@ export class TaskRepositoryPrismaImpl implements ITaskRepository {
         }
     }
 }
-
-//! npm i --save class-validator class-transformer
-
-//! git add .
-//! git commit -m "add: Configuración de los casos de uso para tareas"
-//! git push

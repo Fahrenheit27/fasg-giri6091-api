@@ -35,28 +35,18 @@ export class TasksController {
         return this.createTaskUseCase.execute(task.title, task.description);
     }
 
-    @Get(":id")
-    @ApiOperation({ summary: 'Obtener la tarea por ID' })
-    @ApiParam({ name: 'id', description: 'ID de la tarea (UUID)' })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Tarea encontrada' })
-    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Tarea no encontrada' })
-    async findOne(@Param("id") id: string) {
-        return this.getTaskByIdUseCase.execute(id);
-    }
+    @Get(':id')
+async getById(@Param('id') id: string) {
+    return this.getTaskByIdUseCase.execute(+id);  // ← +id convierte a number
+}
 
-    @Patch(":id")
-    @ApiOperation({ summary: 'Actualiza la tarea por ID' })
-    @ApiParam({ name: 'id', description: 'ID de la tarea (UUID)' })
-    async update(@Param("id") id: string, @Body() updateTask: UpdateTaskDto) {
-        return this.updateTaskUseCase.execute(id, updateTask);
-    }
+@Patch(':id')
+async update(@Param('id') id: string, @Body() updateTask: UpdateTaskDto) {
+    return this.updateTaskUseCase.execute(+id, updateTask); // ← +id
+}
 
-    @Delete(":id")
-    @HttpCode(HttpStatus.NO_CONTENT)
-    @ApiOperation({ summary: 'Eliminar la tarea por ID' })
-    @ApiParam({ name: 'id', description: 'ID de la tarea (UUID)' })
-    @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Tarea eliminada' })
-    async delete(@Param("id") id: string) {
-        return this.deleteTaskUseCase.execute(id);
-    }
+@Delete(':id')
+async delete(@Param('id') id: string) {
+    return this.deleteTaskUseCase.execute(+id);  // ← +id
+}
 }

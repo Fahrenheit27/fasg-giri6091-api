@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
-import { TasksController } from "./../infrastructure/controllers/tasks.controllers";
+import { TasksController } from "./controllers/tasks.controllers";
 import { CreateTaskUseCase } from "../application/create-task.use-case";
 import { ITaskRepositoryToken } from "../domain/task.repository.interface";
-import { TaskRepositoryImpl } from "@/../src/tasks/infrastructure/persistence/task.repository.impl";
 import { GetTaskByIdUseCase } from "../application/get-task-by-id.use-case";
 import { UpdateTaskUseCase } from "../application/update-task.use-case";
 import { DeleteTaskUseCase } from "../application/delete-task.use-case";
+import { TaskRepositoryPrismaImpl } from "./persistence/task.repository.prisma.impl";
 
 @Module({
     controllers: [ TasksController ],
@@ -16,9 +16,9 @@ import { DeleteTaskUseCase } from "../application/delete-task.use-case";
         DeleteTaskUseCase,
         {
             provide: ITaskRepositoryToken,
-            useClass: TaskRepositoryImpl    // Cambiar si la DB cambia
+            useClass: TaskRepositoryPrismaImpl
         }
     ],
-    exports: [ CreateTaskUseCase ]
+    exports: [ CreateTaskUseCase]
 })
-export class TasksModule { }
+export class TaskModule {}

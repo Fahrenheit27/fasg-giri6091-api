@@ -3,20 +3,20 @@ import { ITaskRepositoryToken } from "../domain/task.repository.interface";
 import type { ITaskRepository } from "../domain/task.repository.interface";
 import { Task } from "../domain/task.entity";
 
+
 @Injectable()
 export class GetTaskByIdUseCase {
 
     constructor(
-        @Inject(ITaskRepositoryToken)
+        @Inject(ITaskRepositoryToken) 
         private readonly taskRepository: ITaskRepository
-    ) { }
+    ) {}
 
-    async execute(id: string): Promise<Task> {
+    async execute(id: number): Promise<Task> {  
         const task = await this.taskRepository.findById(id);
-        if (!task)
-            throw new NotFoundException(`La tarea ${id} no existe`);
-        
+        if (!task) {
+            throw new NotFoundException(`La tarea "${id}" no existe.`);
+        } 
         return task;
     }
-
 }
