@@ -1,45 +1,37 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
-import { VersioningType } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // Servir archivos estáticos
+  app.useStaticAssets(join(process.cwd(), 'public'));
+
+  // Prefijo para API (solo aplica a controladores)
   app.setGlobalPrefix('api');
 
-  app.enableVersioning({
-    type: VersioningType.URI,
-    defaultVersion: '1'
+  // Validación global
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+
+  // CORS
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization',
   });
-  app.useGlobalPipes( new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true
-  }));
 
-
-  app.enableCors();
-
-  // Configurar el swagger
-  const config = new DocumentBuilder()
-    .setTitle('Task Manager API')
-    .setDescription('Gestionar tareas')
-    .setVersion('1.0')
-    .addTag('tasks') //Agrupa los endpoints relacionados con tareas
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
-
-  await app.listen(process.env.PORT ?? 3000);
-  console.log("API is running on: http://localhost:3000/api/v1");
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
+  console.log(`✅ Servidor: http://localhost:${port}/`);
+  console.log(`✅ API: http://localhost:${port}/api`);
 }
 bootstrap();
-
-
-//!Uso de prisma para la conexión a la base de datos
-//? npm i -D prisma  
-//? npm i @prisma/client
-//? npx prisma init --datasource-provider postgresql
